@@ -1,14 +1,14 @@
 package templates
 
 var ServiceTemplate string = `
-package service
+package services
 
 import (
-	"{{.ProjectName}}/app/repository"
+	"{{.ProjectName}}/app/repositories"
 )
 
 type {{.Name}}Service struct {
-	{{.NameUnderline}}Repository *repository.{{.Name}}Repository
+	{{.NameUnderline}}Repository *repositories.{{.Name}}Repository
 }
 
 func New{{.Name}}Service(userRepository *repository.{{.Name}}Repository) *UserService {

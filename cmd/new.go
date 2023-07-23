@@ -5,10 +5,17 @@ import (
 	"os"
 	"os/exec"
 
+	models "github.com/marcoantoni0/go-cli/model"
 	"github.com/marcoantoni0/go-cli/templates"
 	"github.com/marcoantoni0/go-cli/util"
 	"github.com/spf13/cobra"
 )
+
+type Data struct {
+	ProjectName   string
+	Name          string
+	NameUnderline string
+}
 
 var projectName string
 
@@ -28,15 +35,20 @@ var NewCmd = &cobra.Command{
 		} else {
 			projectName = projectNameArg
 		}
-		fmt.Printf("✅ Creating %s...\n", projectName)
+		fmt.Printf("🚀 Creating %s...\n", projectName)
 
 		// Generate all folders
 		err := generateFolders()
 		if err != nil {
 			fmt.Println("❌ Error: ", err)
 		}
-		// Generate all folders
-		err = generateFiles()
+		// Generate main.go
+		err = generateMainFile()
+		if err != nil {
+			fmt.Println("❌ Error: ", err)
+		}
+		// Generate all files
+		err = generateAllFiles()
 		if err != nil {
 			fmt.Println("❌ Error: ", err)
 		}
@@ -81,7 +93,7 @@ func generateFolders() error {
 	return nil
 }
 
-func generateFiles() error {
+func generateMainFile() error {
 	data := struct {
 		ProjectName string
 	}{
@@ -91,8 +103,57 @@ func generateFiles() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("✅ main.go file is create successfully.")
+	fmt.Println("✅ main.go file is create successfully.")
 
+	return nil
+}
+
+func generateAllFiles() error {
+	fmt.Println("➡️ Creating all files...")
+
+	files := []models.File{
+		{Name: "user", FileName: "user_service", FileType: 0},
+		{Name: "user", FileName: "user_controller", FileType: 1},
+		{Name: "user", FileName: "user_repository", FileType: 2},
+		{Name: "user", FileName: "user_route", FileType: 3},
+	}
+
+	for _, file := range files {
+		switch file.FileType {
+		case 0:
+			data := Data{
+				ProjectName: projectName, Name: util.CapitalizeFirstLetter(file.Name), NameUnderline: file.Name,
+			}
+			_, err := util.CreateGoFileByTemplate(projectName+"/app/services", file.FileName, templates.ServiceTemplate, data)
+			if err != nil {
+				return err
+			}
+		case 1:
+			data := Data{
+				ProjectName: projectName, Name: util.CapitalizeFirstLetter(file.Name), NameUnderline: file.Name,
+			}
+			_, err := util.CreateGoFileByTemplate(projectName+"/app/controllers", file.FileName, templates.ServiceTemplate, data)
+			if err != nil {
+				return err
+			}
+		case 2:
+			data := Data{
+				ProjectName: projectName, Name: util.CapitalizeFirstLetter(file.Name), NameUnderline: file.Name,
+			}
+			_, err := util.CreateGoFileByTemplate(projectName+"/app/repositories", file.FileName, templates.ServiceTemplate, data)
+			if err != nil {
+				return err
+			}
+		case 3:
+			data := Data{
+				ProjectName: projectName, Name: util.CapitalizeFirstLetter(file.Name), NameUnderline: file.Name,
+			}
+			_, err := util.CreateGoFileByTemplate(projectName+"/app/routes", file.FileName, templates.ServiceTemplate, data)
+			if err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }
 
@@ -114,7 +175,7 @@ func generateMod(projecName string) error {
 }
 
 func installDepedencies() error {
-	fmt.Println("⏩ Installing all packages dependencies...")
+	fmt.Println("➡️ Installing all packages dependencies...")
 	packages := []string{
 		"github.com/gin-gonic/gin",
 	}

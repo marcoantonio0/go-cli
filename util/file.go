@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"os"
+	"strings"
 	textTemplate "text/template"
 )
 
@@ -58,6 +59,16 @@ func CreateGoFileByTemplate(directoryPath, fileName, template string, data inter
 		return nil, err
 	}
 
-	fmt.Printf("%s.go has been created successfully.\n", fileName)
+	fmt.Printf("✅ %s.go has been created successfully.\n", fileName)
 	return file, nil
+}
+
+func CapitalizeFirstLetter(input string) string {
+	// Check if the input string is empty or already starts with an uppercase letter
+	if len(input) == 0 || 'A' <= input[0] && input[0] <= 'Z' {
+		return input
+	}
+
+	// Capitalize the first letter and concatenate the rest of the string
+	return strings.ToUpper(input[:1]) + input[1:]
 }
