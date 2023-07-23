@@ -23,9 +23,9 @@ func main() {
 }
 
 func init() {
-	cmd.GenerateCmd.Flags().StringP("url", "u", "", "Your github url")
+	cmd.NewCmd.Flags().StringP("url", "u", "", "Your github url")
 
-	rootCmd.AddCommand(cmd.GenerateCmd)
+	rootCmd.AddCommand(cmd.NewCmd)
 	rootCmd.AddCommand(cmd.VersionCmd)
 }
 
